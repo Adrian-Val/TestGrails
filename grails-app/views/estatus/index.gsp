@@ -39,11 +39,8 @@
                                 <g:formatDate format="dd-MM-yyyy" date="${estatusInstance.dateCreated}" />
                             </td>
                             <td class="text-center">
-                                <g:if test="${estatusInstance?.activo}">
-                                    <i class="btn btn-success fa-solid fa-circle-check"></i>
-                                </g:if>
-                                <g:if test="${estatusInstance?.activo != 1}">
-                                    <i class="btn btn-danger fa-solid fa-ban"></i>
+                                <g:if test="${estatusInstance}">
+                                    <i class="btn ${estatusInstance.activo == 1 ? 'btn-success fa-circle-check' : 'btn-danger fa-ban'} fa-solid"></i>
                                 </g:if>
                             </td>
                             <td class="text-center"><g:link class="btn btn-secondary" action="show" id="${estatusInstance.id}"><i class="fa-solid fa-eye"></i></g:link></td>
@@ -52,6 +49,17 @@
                 </tbody>
             </table>
         </div>
+        
+        <g:if test="${flash.message || flash.error}">
+            <script type="text/javascript">
+                Swal.fire({
+                    text: '${flash.message ?: flash.error}',
+                    icon: '${flash.icon ?: "info"}',
+                    confirmButtonText: 'OK'
+                });
+            </script>
+        </g:if>
+
         
         <script type="text/javascript">
             $(document).ready(function() {

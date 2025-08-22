@@ -16,6 +16,42 @@
                 <g:link class="btn btn-warning list" action="index"><i class="fa-solid fa-list"></i> Listado</g:link>
             </div>
         </div>
+        
+        <!--<g:if test="${flash.message}">-->
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h5 class="card-title"><b>Correo electrónico</b></h5><hr>
+
+                    <!--<div class="row">
+                        <div class="col-8"><p id="subjectMail">Usuario para generar cita en área de consulta.</p></div>
+                        <div class="col-4 d-flex justify-content-end">
+                            <button class="btn btn-primary" id="copySubjectEmail"><i class="fa-solid fa-copy"></i> Copiar</button>
+                        </div>
+                    </div>
+
+                    <hr>-->
+
+                    <div class="row">
+                        <div class="col-12" id="bodyEmail">
+                            <p>Se verificaron los datos proporcionados en la plataforma de Citas IFREM y se generó su usuario con éxito.</p>                        
+                            <p>
+                                <b>Usuario: </b> ${tipoActividadInstance.nombre}
+                                <br>
+                                <b>Contraseña: </b> ${tipoActividadInstance.nombre}
+                            </p>
+                            <p>Para iniciar sesión ingresar a la liga <b> http://plataforma.ifrem.gob.mx:8081/citasWeb/login/auth </b> en el apartado de <b> "Citas para el Área de Consulta en las Oficinas Registrales".</p>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12 d-flex justify-content-end">
+                            <button class="btn btn-primary" id="copyBodyEmail"><i id="iconCopy" class="fa-solid fa-copy"></i> Copiar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <!--</g:if>-->
+        
         <div class="card mt-3">
             <div id="show-tipoActividad" class="content scaffold-show card-body" role="main">                
                 <ul class="property-list tipoActividad">
@@ -61,7 +97,7 @@
             </div>
         </div>
         
-        <g:if test="${flash.message}">
+        <!--<g:if test="${flash.message}">
             <script type="text/javascript">
                 Swal.fire({
                   text: '${flash.message}',
@@ -69,7 +105,7 @@
                   confirmButtonText: 'OK'
                 });
             </script>
-        </g:if>
+        </g:if>-->
         
         <script>                
             function deleteConfirm(){
@@ -100,6 +136,26 @@
                     }
                 });
             }
+            
+            <!-- COPY TO CLIPBOARD -->
+            document.addEventListener('DOMContentLoaded', () => {
+                const textToCopyElement = document.getElementById('bodyEmail');
+                const copyButton = document.getElementById('copyBodyEmail');
+                const iconCopy = document.getElementById('iconCopy');
+
+                if (copyButton && textToCopyElement) {
+                    copyButton.addEventListener('click', async () => {
+                    const text = textToCopyElement.innerText;
+
+                    try {
+                        await navigator.clipboard.writeText(text);
+                    } catch (err) {
+                        console.error('Ocurrió un error: ', e);
+                        alert('Error al copiar texto. Por favor intenta de nuevo o copia manualmente.');
+                    }
+                });
+            }
+        });
         </script>
     </body>
 </html>

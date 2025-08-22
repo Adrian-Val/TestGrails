@@ -6,10 +6,10 @@ import grails.transaction.Transactional
 @Transactional(readOnly = true)
 class EstatusController {
 
-    static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
+    static allowedMethods = [save: "POST", update: "PUT", delete: "POST"]
 
     def index() {
-        respond Estatus.list()
+        respond Estatus.findAllByActivo(1)
     }
 
     def show(Estatus estatusInstance) {
@@ -70,28 +70,43 @@ class EstatusController {
             redirect( action: 'create')
         }
     }
-
+    
+    
     @Transactional
-    def delete(Estatus estatusInstance) {
-
+    def borrarEstatus(Estatus estatusInstance) {
         if (estatusInstance == null) {
             notFound()
             return
         }
-
+        
         try {
-            estatusInstance.delete flush:true
-
-            request.withFormat {
-                form multipartForm {
-                    flash.message = message(code: 'default.deleted.message', args: [message(code: 'Estatus.label', default: 'Estatus'), estatusInstance.id])
-                    redirect action:"index", method:"GET"
-                }
-                '*'{ render status: NO_CONTENT }
+            def estatusToDelete = Estatus.findById(estatusInstance.id)
+                estatusToDelete.activo = 0
+            
+            if (!estatusToDelete.save(flush: true)) {
+                flash.error = "¡Error al eliminar registro!"
+                flash.icon = "error"
+                redirect(action: "index")
+                return
             }
-        } catch (Exception e) {
+            
+            def bitacoraElim = new BitacoraEliminacion(
+                descripcion: params.motivo,
+                estatus: Estatus.get(estatusInstance.id) // Otra opción sería -> estatus: estatusInstance
+            )
+
+            if (bitacoraElim.save(flush: true)) {
+                flash.message = "Registro eliminado con éxito"
+                flash.icon = "success"
+            } else {
+                flash.error = "¡Error al insertar en bitácora!"
+                flash.icon = "error"
+            }
+        }  catch (Exception e) {
             flash.error  = "¡Ocurrió un error inesperado!"
-            redirect( action: 'create')
+            flash.icon = "error"
         }
+
+        redirect( action: 'index')
     }
 }
